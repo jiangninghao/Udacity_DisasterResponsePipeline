@@ -6,7 +6,7 @@ This is for the 2nd project in Udacity Data Scientist nanodegree. Below is the t
 2. Python library used
 3. Data source
 4. File description
-5. Summary
+5. Instruction for code execution in Udacity IDE
 
 ## Motivation of the project 
 
@@ -30,6 +30,13 @@ This is for the 2nd project in Udacity Data Scientist nanodegree. Below is the t
 3. data_process.py - help run ELT pipeline in Udacity IDE that cleans data and stores in the database
 4. train_classifier.py - run ML pipeline that trains calssifier and saves model output
 
-## Summary 
-1. ETL result is stored in a SQL database
-2. RandomForecastClassifier outperformed DecisionTreeClassifier
+### Instructions for running codes in Udacity IDE:
+1. Run the following commands in the project's root directory to set up your database and model.
+    - To run ETL pipeline that cleans data and stores in database
+        `python data/process_data.py data/disaster_messages.csv data/disaster_categories.csv data/DisasterResponse.db`
+    - To run ML pipeline that trains classifier and saves
+        `python models/train_classifier.py data/DisasterResponse.db models/classifier.pkl`
+2. Go to `app` directory: `cd app`
+3. Run your web app: `python run.py`
+4. Click the `PREVIEW` button to open the homepage
+
