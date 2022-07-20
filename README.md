@@ -6,7 +6,7 @@ This is for the 2nd project in Udacity Data Scientist nanodegree. Below is the t
 2. Python library used
 3. Data source
 4. File description
-5. Instruction for code execution in Udacity IDE
+5. Instruction for code execution
 
 ## Motivation of the project 
 
@@ -21,8 +21,7 @@ This is for the 2nd project in Udacity Data Scientist nanodegree. Below is the t
 - sklearn
 
 ## Data Source
-- 2 csv data files were provided by the Udacity team - messages.csv and categories.csv; 
-- 2 python scripts were also uploaded 
+- 2 csv data files provided by Udacity containing messages and categories information
 
 ## File description 
 1. messages - inlcude ID, disaster message, original disaster message and genre info
@@ -30,7 +29,7 @@ This is for the 2nd project in Udacity Data Scientist nanodegree. Below is the t
 3. data_process.py - help run ELT pipeline in Udacity IDE that cleans data and stores in the database
 4. train_classifier.py - run ML pipeline that trains calssifier and saves model output
 
-### Instructions for running codes in Udacity IDE:
+### Instructions for code execution:
 1. Run the following commands in the project's root directory to set up your database and model.
     - To run ETL pipeline that cleans data and stores in database
         `python data/process_data.py data/disaster_messages.csv data/disaster_categories.csv data/DisasterResponse.db`
