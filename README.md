@@ -21,14 +21,14 @@ This is for the 2nd project in Udacity Data Scientist nanodegree. Below is the t
 - sklearn
 
 ## Data Source
-2 csv data files were provided by the Udacity team - messages.csv and categories.csv; 
-2 python scripts were also uploaded 
+- 2 csv data files were provided by the Udacity team - messages.csv and categories.csv; 
+- 2 python scripts were also uploaded 
 
 ## File description 
-messages - inlcude ID, disaster message, original disaster message and genre info
-categories - later used to create unique categories for each disaster message
-data_process.py - help run ELT pipeline in Udacity IDE that cleans data and stores in the database
-train_classifier.py - run ML pipeline that trains calssifier and saves model output
+1. messages - inlcude ID, disaster message, original disaster message and genre info
+2. categories - later used to create unique categories for each disaster message
+3. data_process.py - help run ELT pipeline in Udacity IDE that cleans data and stores in the database
+4. train_classifier.py - run ML pipeline that trains calssifier and saves model output
 
 ## Summary 
 1. ETL result is stored in a SQL database
