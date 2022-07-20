@@ -65,7 +65,7 @@ def build_model():
 
 def evaluate_model(model, X_test, Y_test, category_names):
     
-    Y_pred = model.predict(X_text)
+    Y_pred = model.predict(X_test)
     # col_names = list(Y.columns.values)
     
     for i in range(len(category_names)):
