@@ -1,5 +1,6 @@
 # Udacity_DisasterResponsePipeline
-This repository contains all working files for the DisasterResponsePipeline Udacity project
+This repository contains all working files for the DisasterResponsePipeline Udacity project. 
+Github link: https://github.com/jiangninghao/Udacity_DisasterResponsePipeline.git
 
 This is for the 2nd project in Udacity Data Scientist nanodegree. Below is the table of contents for this file: 
 1. Motivation of the project
