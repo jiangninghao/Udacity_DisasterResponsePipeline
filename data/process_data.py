@@ -1,109 +1,78 @@
 import sys
 
 import pandas as pd
-import numpy as np
-import pickle 
-
-import nltk
-nltk.download(['punkt', 'wordnet'])
-from nltk.tokenize import word_tokenize
-from nltk.stem import WordNetLemmatizer
-
-from sqlalchemy import create_engine 
-
-from sklearn.pipeline import Pipeline
-from sklearn.model_selection import train_test_split
-from sklearn.multioutput import MultiOutputClassifier
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
-from sklearn.metrics import classification_report
-from sklearn.model_selection import GridSearchCV
+import numpy as np 
+from sqlalchemy import create_engine
 
 
-def load_data(database_filepath):
-    engine = create_engine('sqlite:///' + database_filepath)
-    df = pd.read_sql_table('category_message', engine)
+def load_data(messages_filepath, categories_filepath):
+    messages = pd.read_csv(messages_filepath)
+    categories = pd.read_csv(categories_filepath)
     
-    X = df['message']
-    Y = df.iloc[:, 4:]
-    category_names = list(df.columns[4:])
+    #merge datasets
+    df = messages.merge(categories, on='id')
     
-    return X, Y, category_names
-
-
-def tokenize(text):
+    #build a new dataframe by splitting the 'categories' column into 36 columns separated by semi-colon
+    categories = df['categories'].str.split(";", expand=True)
     
-    tokens = word_tokenize(text)
-    lemmatizer = WordNetLemmatizer()
-    
-    clean_tokens = []
-    for tok in tokens:
-        clean_tok = lemmatizer.lemmatize(tok).lower().strip()
-        clean_tokens.append(clean_tok)
-    
-    return clean_tokens
-
-
-def build_model():
-    
-    #set ML pipeline
-    pipeline = Pipeline([
-        ('vect', CountVectorizer()),
-        ('tfidf', TfidfTransformer()),
-        ('clf', MultiOutputClassifier(RandomForestClassifier()))])
-    
-    #use grid search to find better parameters
-    parameters = {
-        #'vect__ngram_range': ((1,1), (1,2))} 
-        'vect__max_df': (0.75, 1.0)}
-        # 'tfidf__use_idf': (True, False)}
-    
-    cv = GridSearchCV(pipeline, param_grid=parameters)
-    
-    return cv 
-
-
-def evaluate_model(model, X_test, Y_test, category_names):
-    
-    Y_pred = model.predict(X_test)
-    # col_names = list(Y.columns.values)
-    
-    for i in range(len(category_names)):
-        print("Precision, Recall, F1 score for {}".format(category_names[i]))
-        print(classification_report(Y_test.iloc[:, i], Y_pred[:, i]))
-        
+    #add column names for each splited column 
+    row = categories.iloc[0]
+    category_colnames = row.apply(lambda x:x[:-2])
+    categories.columns = category_colnames
   
+    #convert category values to just numbers 0 or 1 
+    for column in categories:
+        categories[column] = categories[column].str[-1]
+        categories[column] = categories[column].astype(int)
+        
+    #drop the original categories from df
+    df = df.drop(['categories'], axis=1)
+    
+    #concatenate orignal dataframe with the new dataframe 
+    df = pd.concat([df, categories], axis=1, join='inner')
+    
+    return df 
 
-def save_model(model, model_filepath):
-    pickle.dump(cv, open('RFC_model.pkl', 'wb'))
+
+def clean_data(df):
+                        
+    #drop duplicates from the dataframe
+    df = df.drop_duplicates(keep=False)
+    
+    return df
+
+
+def save_data(df, database_filename):
+    engine = create_engine('sqlite:///' + database_filename) 
+    df = df.to_sql('category_message', engine, index=False)
+    
+    return df
 
 
 def main():
-    if len(sys.argv) == 3:
-        database_filepath, model_filepath = sys.argv[1:]
-        print('Loading data...\n    DATABASE: {}'.format(database_filepath))
-        X, Y, category_names = load_data(database_filepath)
-        X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2)
-        
-        print('Building model...')
-        model = build_model()
-        
-        print('Training model...')
-        model.fit(X_train, Y_train)
-        
-        print('Evaluating model...')
-        evaluate_model(model, X_test, Y_test, category_names)
+    if len(sys.argv) == 4:
 
-        print('Saving model...\n    MODEL: {}'.format(model_filepath))
-        save_model(model, model_filepath)
+        messages_filepath, categories_filepath, database_filepath = sys.argv[1:]
 
-        print('Trained model saved!')
+        print('Loading data...\n    MESSAGES: {}\n    CATEGORIES: {}'
+              .format(messages_filepath, categories_filepath))
+        df = load_data(messages_filepath, categories_filepath)
 
+        print('Cleaning data...')
+        df = clean_data(df)
+        
+        print('Saving data...\n    DATABASE: {}'.format(database_filepath))
+        save_data(df, database_filepath)
+        
+        print('Cleaned data saved to database!')
+    
     else:
-        print('Please provide the filepath of the disaster messages database '\
-              'as the first argument and the filepath of the pickle file to '\
-              'save the model to as the second argument. \n\nExample: python '\
-              'train_classifier.py ../data/DisasterResponse.db classifier.pkl')
+        print('Please provide the filepaths of the messages and categories '\
+              'datasets as the first and second argument respectively, as '\
+              'well as the filepath of the database to save the cleaned data '\
+              'to as the third argument. \n\nExample: python process_data.py '\
+              'disaster_messages.csv disaster_categories.csv '\
+              'DisasterResponse.db')
 
 
 if __name__ == '__main__':
