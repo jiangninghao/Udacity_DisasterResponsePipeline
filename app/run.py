@@ -39,12 +39,16 @@ model = joblib.load("../models/RFC_model.pkl")
 def index():
     
     # extract data needed for visuals
-    # TODO: Below is an example - modify to extract data for your own visuals
+  
     genre_counts = df.groupby('genre').count()['message']
     genre_names = list(genre_counts.index)
     
+    # visualize total counts of category counts 
+    category_counts = df.iloc[:, 4:].sum().sort_values()
+    category_names = list(category_counts.index)
+    
     # create visuals
-    # TODO: Below is an example - modify to create your own visuals
+ 
     graphs = [
         {
             'data': [
@@ -61,6 +65,24 @@ def index():
                 },
                 'xaxis': {
                     'title': "Genre"
+                }
+            }
+        },
+        {
+            'data': [
+                Bar(
+                    x=category_names,
+                    y=category_counts
+                )
+            ],
+
+            'layout': {
+                'title': 'Category Distribution',
+                'yaxis': {
+                    'title': "Count"
+                },
+                'xaxis': {
+                    'title': "Category"
                 }
             }
         }
