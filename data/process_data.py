@@ -6,6 +6,20 @@ from sqlalchemy import create_engine
 
 
 def load_data(messages_filepath, categories_filepath):
+    '''
+    Load_data
+    Load data from csv files and merge the data into a single dataframe
+    
+    Input: 
+    message_filepath    file path for messages csv file 
+    categories_filepath file path for categories csv file 
+    
+    categories  new data frame of separating 'categories' column into 36 columns by semi-colon
+    
+    Return:
+    df  final data frame merging messages and categories data
+    '''
+    
     messages = pd.read_csv(messages_filepath)
     categories = pd.read_csv(categories_filepath)
     
@@ -26,7 +40,8 @@ def load_data(messages_filepath, categories_filepath):
         categories[column] = categories[column].astype(int)
         
     #drop the original categories from df
-    df = df.drop(['categories'], axis=1)
+    #drop column 'related' from dataframe because the category contains a multiclass
+    df = df.drop(['categories', 'related'], axis=1)
     
     #concatenate orignal dataframe with the new dataframe 
     df = pd.concat([df, categories], axis=1, join='inner')
@@ -43,8 +58,13 @@ def clean_data(df):
 
 
 def save_data(df, database_filename):
+    '''
+    engine  point to database location
+    df  upload and replace data into category_message database
+    '''
+    
     engine = create_engine('sqlite:///' + database_filename) 
-    df = df.to_sql('category_message', engine, index=False)
+    df = df.to_sql('category_message', engine, index=False, if_exists='replace')
     
     return df
 
