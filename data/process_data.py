@@ -43,7 +43,7 @@ def load_data(messages_filepath, categories_filepath):
     df = df.drop(['categories'], axis=1)
     
     #drop column 'related' from dataframe because the category contains a multiclass
-    categories = categories.drop['related', axis=1)
+    categories = categories.drop(['related'], axis=1)
     
     #concatenate orignal dataframe with the new dataframe 
     df = pd.concat([df, categories], axis=1, join='inner')
