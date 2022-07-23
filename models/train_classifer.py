@@ -75,7 +75,7 @@ def evaluate_model(model, X_test, Y_test, category_names):
   
 
 def save_model(model, model_filepath):
-    pickle.dump(cv, open('RFC_model.pkl', 'wb'))
+    pickle.dump(model, open('RFC_model.pkl', 'wb'))
 
 
 def main():
