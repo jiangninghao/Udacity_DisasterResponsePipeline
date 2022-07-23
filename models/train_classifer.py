@@ -21,6 +21,18 @@ from sklearn.model_selection import GridSearchCV
 
 
 def load_data(database_filepath):
+    '''
+    Load data from the database 
+    
+    Arguments:
+    database_filepath   Path to SQLite desitination database (i.e., category_message database)
+    
+    Outputs: 
+    X   dataframe containing feature 
+    Y   dataframe containing labels
+    category_names  List of column names
+    '''
+    
     engine = create_engine('sqlite:///' + database_filepath)
     df = pd.read_sql_table('category_message', engine)
     
@@ -33,7 +45,13 @@ def load_data(database_filepath):
 
 def tokenize(text):
     
+    #tokenize text
     tokens = word_tokenize(text)
+    
+    #remove stop words
+    tokens = [tok for tok in tokens if tok not in stop_words] 
+    
+    #lemmatize text
     lemmatizer = WordNetLemmatizer()
     
     clean_tokens = []
